@@ -10,4 +10,4 @@
 *See on Tableau Public:* **[COVID Development Dashboard](https://public.tableau.com/views/CovidDashboard_17126513239640/Dashboard1?:language=en-US&:sid=&:display_count=n&:origin=viz_share_link)**<br />
 *Review the Data SQL Script:* **[HERE](https://github.com/dmera/DataPortfolio/blob/main/Covid%20Data%20Project.sql)**<br />
 
-![COVID Development Dashboard](visuals/InstagramCloneDashboard.png)
+![COVID Development Dashboard](https://github.com/dmera/DataPortfolio/assets/15237744/cd15f0dd-be8c-41a7-ba56-6133bdca857a)
