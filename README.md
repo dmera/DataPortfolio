@@ -1,7 +1,8 @@
 # Data Portfolio Projects
 ## Following are my projects in SQL, Python, Tableau & Excel: <br />
-#### *You can take a look at my personal website : [Daniel ML Website](https://daniel-ml.webflow.io/)* <br /> 
-#### *You can also take a look at my Linkedin : [Daniel ML](https://www.linkedin.com/in/dani-ml/)* <br /> <br />
+#### *Take a look at my personal website: [Daniel ML Website](https://daniel-ml.webflow.io/)* <br /> 
+#### *And here is my Profile on Tableau: [Daniel ML's Tableau Profile](https://public.tableau.com/app/profile/daniel.mera.luna/vizzes)* <br /> 
+#### *You can also take a look at my LinkedIn: [Daniel ML](https://www.linkedin.com/in/dani-ml/)* <br /> <br />
 
 
 
