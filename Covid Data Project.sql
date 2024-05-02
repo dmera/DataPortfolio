@@ -184,3 +184,8 @@ Join PortfolioProject1CovidDeaths..CovidVaccinations vac
 	On dea.location = vac.location
 	and dea.date = vac.date
 where dea.continent is not null 
+
+
+/* Credits for this projects structure go to Alex The Analyst:
+https://www.youtube.com/@AlexTheAnalyst
+*/
