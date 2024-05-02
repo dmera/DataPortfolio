@@ -5,7 +5,7 @@
 
 
 
-### -[x]- **SQL & Tableau** 
+###  **─  SQL & Tableau  ─** 
   - COVID Development Analysis Project<br />
 *See on Tableau Public:* **[COVID Development Dashboard](https://public.tableau.com/views/CovidDashboard_17126513239640/Dashboard1?:language=en-US&:sid=&:display_count=n&:origin=viz_share_link)**<br />
 *Review the Data SQL Script:* **[HERE](https://github.com/dmera/DataPortfolio/blob/main/Covid%20Data%20Project.sql)**<br />
