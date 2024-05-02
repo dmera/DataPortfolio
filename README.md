@@ -6,6 +6,12 @@
 
 
 
+###  **─  Data Cleaning in SQL  ─** 
+  - Data Cleaning Project: Housing Market in Nashville <br />
+*Review the Data SQL Script:* **[HERE](https://github.com/dmera/DataPortfolio/blob/main/Data%20Cleaning%3A%20Housing%20Market%20in%20Nashville)**<br />
+
+
+
 ###  **─  SQL & Tableau  ─** 
   - COVID Development Analysis Project<br />
 *See on Tableau Public:* **[COVID Development Dashboard](https://public.tableau.com/views/CovidDashboard_17126513239640/Dashboard1?:language=en-US&:sid=&:display_count=n&:origin=viz_share_link)**<br />
