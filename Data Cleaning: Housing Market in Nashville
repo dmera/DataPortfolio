@@ -1,0 +1,301 @@
+/*
+
+Cleaning Data in SQL Queries
+
+*/
+
+
+SELECT *
+FROM [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+--1. Standardize Date Format
+
+-- Option 1 converting the Format directly
+SELECT CONVERT(Date,SaleDate) as SaleDateFormated
+FROM [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+
+-- Option 2 (didn't work)
+Update [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+Set SaleDate = CONVERT(Date,SaleDate)
+
+-- Option 3 altering table by adding a column with Converted Date Format:
+ALTER TABLE NashvilleHousing
+Add SaleDateConverted Date;
+
+Update [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+SET SaleDateConverted = CONVERT(Date,SaleDate)
+
+SELECT SaleDateConverted
+FROM [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+
+-------------------------------------------------------------------------------------------------------------------
+
+--2. Populate Property Address Data
+SELECT PropertyAddress
+FROM [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+WHERE PropertyAddress is NULL
+order by ParcelID
+--we can see here that there are many lines where Property Address is NULL, also we can see that there is always one parcel id for one property address
+
+SELECT a.ParcelID, a.PropertyAddress, b.ParcelID, b.PropertyAddress, ISNULL(a.PropertyAddress,b.PropertyAddress)
+FROM [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing] a
+JOIN [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing] b
+	on a.ParcelID = b.ParcelID
+	AND a.[UniqueID ] <> b.[UniqueID ]
+WHERE a.PropertyAddress is NULL
+--for all cases where property address was null, there is another line with the same parcel id where the address is known. They have a different unique id
+
+Update a
+SET PropertyAddress = ISNULL(a.PropertyAddress,b.PropertyAddress)
+FROM [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing] a
+JOIN [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing] b
+	on a.ParcelID = b.ParcelID
+	AND a.[UniqueID ] <> b.[UniqueID ] 
+WHERE a.PropertyAddress is NULL
+-- this update replaces the missing address with the address from the line with the same parcel id and different unique id. We can check that it worked because, when running the previews query after running the update, it doesn't find any mor cases where a.PropertyAddress is NULL
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+--3. Breaking down  Address into Individual columns (Address, City, State)
+
+SELECT
+SUBSTRING(PropertyAddress, 1, CHARINDEX(',', PropertyAddress) -1) as Address,
+SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddress) +2, LEN(PropertyAddress)) as City
+
+FROM [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+
+--these substrings create a column for Address and City separated. Now we know tthey work, we'll use them to update the table
+
+
+ALTER TABLE [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+Add PropertyAddress_Split Nvarchar(255);
+
+Update [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+SET PropertyAddress_Split = SUBSTRING(PropertyAddress, 1, CHARINDEX(',', PropertyAddress) -1)
+
+ALTER TABLE [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+Add PropertyCity_Split Nvarchar(255);
+
+Update [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+SET PropertyCity_Split = SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddress) +2, LEN(PropertyAddress))
+
+--we are altering the table by adding two new culmns at the end, using the substrings for Address and City separated. This was for Property Address. We can see them if we see the whole table:
+
+SELECT *
+FROM [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+
+
+
+
+--------------------------------------
+--4. now we will go to Owner Address, which has also State). Since it is too painful with Substring, we will not use it here but rather use 
+
+SELECT
+PARSENAME(REPLACE(OwnerAddress, ', ', '.') , 3)
+, PARSENAME(REPLACE(OwnerAddress, ', ', '.') , 2)
+, PARSENAME(REPLACE(OwnerAddress, ', ', '.') , 1)
+-- PARSENAME takes a part of the value until it finds a dot (.). Since the Address has commas (,) instead, we have to first use REPLACE to replace the commas with dots.
+-- PARSENAME goes from right to left, so in an address format "Main Street, City, State" it takes first the State, the City, then Street. That's why we order it 3, 2, 1
+FROM [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+
+
+
+ALTER TABLE [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+Add OwnerAddress_Split Nvarchar(255);
+
+Update [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+SET OwnerAddress_Split = PARSENAME(REPLACE(OwnerAddress, ', ', '.') , 3)
+
+
+ALTER TABLE [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+Add OwnerCity_Split Nvarchar(255);
+
+Update [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+SET OwnerCity_Split = PARSENAME(REPLACE(OwnerAddress, ', ', '.') , 2)
+
+
+ALTER TABLE [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+Add OwnerState_Split Nvarchar(255);
+
+Update [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+SET OwnerState_Split = PARSENAME(REPLACE(OwnerAddress, ', ', '.') , 1)
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+--5. Change Y and N to Yes and No in "SoldAsVacant" field
+--most of the cells have Yes and No, but some have Y and N. Lets change that
+
+SELECT Distinct(SoldAsVacant), COUNT(SoldAsVacant)
+FROM [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+GROUP BY SoldAsVacant
+ORDER BY 2
+--here we see that most of the cells have Yes and No, but some have Y and N. Lets change that
+
+
+SELECT SoldAsVacant
+, CASE	WHEN SoldAsVacant = 'Y' THEN 'Yes'
+		WHEN SoldAsVacant = 'N' THEN 'No'
+		ELSE SoldAsVacant
+		END
+FROM [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+
+-- this CASE does the change. Now we use it to update the table:
+
+Update [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+ SET SoldAsVacant = CASE	WHEN SoldAsVacant = 'Y' THEN 'Yes'
+							WHEN SoldAsVacant = 'N' THEN 'No'
+							ELSE SoldAsVacant
+							END
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+-- 6. Remove duplicates
+
+Select *,
+	ROW_NUMBER() OVER (
+	PARTITION BY ParcelID,
+				 PropertyAddress,
+				 SalePrice,
+				 SaleDate,
+				 LegalReference
+				 ORDER BY
+					UniqueID
+					) row_num
+
+From [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+order by ParcelID
+-- so here we first select all and add this new row_num column this shows duplicates:
+-- We use partition because it helps us determine things that should be unique for each row. This column gibes a number to each row. 1 means first, 2 means duplicate
+--In case all of them are duplicate, we can assume the row is duplicate, so the duplicate data is unusable, so we need to get rid of it
+-- we give it the name row_num
+
+WITH RowNumCTE AS(
+Select *,
+	ROW_NUMBER() OVER (
+	PARTITION BY ParcelID,
+				 PropertyAddress,
+				 SalePrice,
+				 SaleDate,
+				 LegalReference
+				 ORDER BY
+					UniqueID
+					) row_num
+From [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+)
+Select *
+From RowNumCTE
+Where row_num > 1
+Order by PropertyAddress
+
+
+-- So here, the CTE queries all the duplicates. Now we have to delete them:
+
+
+WITH RowNumCTE AS(
+Select *,
+	ROW_NUMBER() OVER (
+	PARTITION BY ParcelID,
+				 PropertyAddress,
+				 SalePrice,
+				 SaleDate,
+				 LegalReference
+				 ORDER BY
+					UniqueID
+					) row_num
+From [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+)
+DELETE
+From RowNumCTE
+Where row_num > 1
+
+-- Done, duplicates (where row_num >1) where deleted. When we run the previews query again, none appear any more
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+-- 7. Finally, delete unused columns
+
+Select *
+From [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+-- here we search for unused / unusable columns. Property and Owner Address are good example, since we already separated them.
+
+Alter table [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+		Drop Column PropertyAddress, OwnerAddress, TaxDistrict
+
+Alter table [3-PortfolioProject-DataCleaning].[dbo].[NashvilleHousing]
+		Drop Column SaleDate
+-- we deleted those columns. after runnung the previews query again, we confirm that, done!
+-- we had forgotten to erase SaleDate, so we do it after separately. Done done :)
+
+
+/* Credits for this projects structure go to Alex The Analyst:
+https://www.youtube.com/@AlexTheAnalyst
+*/
+
+/* FINAL RECAP
+
+first	we changed / standardized the date format using CONVERT
+second	we populated the Property Address by finding duplicate Address info, and copying it where it was NULL
+		we did this using the ISNULL condition for UPDATING the Address,using JOIN to make an A (NULL) and B (filled) sides, and replacing A with B
+		IMPORTANT:	we did this BEFORE we broke the addresses into Street / City / State!!!
+third	we broke down the property address, creating separate columns for Street, City, State. 
+		We did is using Substring and Charindex to separate each value, and then updating the table.
+fourth	we broke down the owner address column, but this time we used the Parsename function and replacing each value, which simplifies the process a lot compared to the previews step
+fifth	we changed y and n to yes and no, in order to standardize
+		We did this usin case statements
+sixth	we removed duplicates using Partition by to determine values that should be unique to each row. In the case they repeat, then there is a duplicate we will want to delete.
+		We used the RowNumCTE function which queries duplicates and we ask it to delete the ones with Row_Num >1
+lastly	we deleted unused columns, like the unes from property and owner address that we had previewsly already separated aand made useful.
+		We did this using the alter table, drop colum function.
+
+*/
+
+
+
+
+
+/*	
+	LEARNINGS 
+
+		This data cleaning project was very valuable to focus on several steps of the data cleaning process:
+
+	-	Identified and addressed data inconsistencies: We identified inconsistencies in the data, such as non-standard date formats, missing addresses,	
+		and mixed value representations (Y/N vs Yes/No). We then implemented techniques like CONVERT function, joins, and CASE statements to clean the data.
+	-	Used partitioning for duplicate detection: We effectively used the ROW_NUMBER() function with PARTITION BY to identify duplicate data entries based 
+		on specific combinations of columns (e.g., ParcelID, SalePrice). This approach is efficient for handling large datasets.
+	-	Data transformation for improved analysis: We transformed data by splitting addresses and owner addresses into separate street, city, and state columns
+		using functions like SUBSTRING and PARSENAME. This improves the usability of the data for further analysis.
+	-	Data exploration for informed cleaning decisions: We used queries like SELECT DISTINCT and COUNT to explore the data and understand the distribution of
+		values in specific columns (e.g., SoldAsVacant). This exploration helped you determine appropriate cleaning strategies.
+	-	Data quality checks: We implicitly performed data quality checks throughout the process. For instance, by verifying that there are no more null values
+		in the address column after populating missing entries.
+
+	NEXT STEPS
+	-	Validate Data Accuracy: While we addressed inconsistencies, we should consider incorporating external sources or reference data to validate the accuracy of the
+		cleaned data. For example, we could use a national address database to verify if the extracted addresses are valid and complete.
+
+	-	Explore Data Relationships:  Now that our data is cleaned, we can explore potential relationships between the different attributes. For instance we can analyze
+		how Sale Price might correlate with factors like Property Address (city, zip code), SaleDate (seasonal trends), or Square Footage. We can use techniques
+		like correlation analysis or visualization tools to uncover these relationships.
+
+*/
