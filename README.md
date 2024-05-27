@@ -5,6 +5,11 @@
 #### *You can also take a look at my LinkedIn: [Daniel ML](https://www.linkedin.com/in/dani-ml/)* <br /> <br />
 
 
+###  **─  Data Correlations in Python  ─** 
+  - Data Correlations Analysis Project: Correlations for Popluar Movies <br />
+*Review the Python Script:* **[HERE](https://github.com/dmera/DataPortfolio/blob/main/Movie_Correlation_Project.ipynb)**<br />
+
+
 
 ###  **─  Data Cleaning in SQL  ─** 
   - Data Cleaning Project: Housing Market in Nashville <br />
