@@ -1,8 +1,6 @@
 # Data Portfolio Projects
-## Following are my projects in SQL, Python, Tableau, Power BI & Excel: <br />
-#### *Take a look at my personal website: [Daniel ML Website](https://daniel-ml.webflow.io/)* <br /> 
-#### *And here is my Profile on Tableau: [Daniel ML's Tableau Profile](https://public.tableau.com/app/profile/daniel.mera.luna/vizzes)* <br /> 
-#### *You can also take a look at my LinkedIn: [Daniel ML](https://www.linkedin.com/in/dani-ml/)* <br /> <br />
+## Following are my projects in SQL, Python, Tableau, Power BI & Excel: <br /><br />
+
 
 ###  **─  Flow Insight: A Data-Driven Analysis to World Trade  ─** 
   - Understanding the role of Economic Complexity Index (ECI) in countries' economic development. Data pipeline creation and predictions with ML. DA Bootcamp Final Project <br />
