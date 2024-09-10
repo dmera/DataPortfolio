@@ -5,7 +5,10 @@
 ###  **─  Flow Insight: A Data-Driven Analysis to World Trade  ─** 
   - Understanding the role of Economic Complexity Index (ECI) in countries' economic development. Data pipeline creation and predictions with ML. DA Bootcamp Final Project <br />
 *Review the Python Script:* **[HERE](https://github.com/dmera/DataPortfolio/blob/main/Flow_Insight)**<br />
-
+####  **─  ECI Treemaps: Comparing Norway (low ECI) and Czechia (high ECI)  ─** 
+![ECI Treemaps](https://github.com/user-attachments/assets/cec6837e-1608-4a90-9ee6-aa696fe17fd0) <br />
+####  **─  GDP / capita vs ECI, no correlation: Norway's reliance on oil and fish gives it a low ECI regardless of its high GDP; Czechia's industry gives it a high ECI despite its modest GDP  ─** 
+![GDP vs ECI](https://github.com/user-attachments/assets/da771211-34a5-454a-b7a0-ebfa8dfbffff) <br />
 
 ###  **─  Data Correlations in Python  ─** 
   - Data Correlations Analysis Project: Correlations for Popular Movies <br />
